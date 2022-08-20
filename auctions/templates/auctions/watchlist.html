@@ -1,0 +1,18 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    {% for listing in watchlist %} 
+        <h3>
+            <a href="{% url 'listing' listing.id %}">
+                {{ listing.title }}
+            </a>
+        </h3>
+        <p>Starting price: {{ listing.price }} </p>
+        <p>Highest bid: Later</p>
+        
+        {% if user.is_authenticated %}
+        <br>
+            <a href="{% url 'remove_watchlist' listing.id %}" class="btn btn-secondary">Remove Item</a>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

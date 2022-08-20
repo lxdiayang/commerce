@@ -1,0 +1,51 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h1> {{ listing.title }} </h1>
+
+    <p><b>Description: </b>{{ listing.description }}</p>
+    <p><b>Starting Bid: </b>{{ listing.starting_bid }} Galleons</p>
+    <p><b>Category: </b>{{ listing.category }}</p>
+    <p><img src= "{{ listing.url }}")> </p>
+
+    {% if user.is_authenticated %}
+    
+    {% if listing.creator == user and listing.is_active %}
+        <a href="{% url 'close_listing' listing.id %}" class="btn-btn-outline-info" role="button">Close</a><br>
+    
+    {% elif listing.is_active == False %}
+        {% if listing.creator == user %}
+            <p>Item sold to {{ listing.buyer }} for {{listing.current_bid}} Galleons</p>
+        {% elif listing.buyer == user %}
+            <p>You've won this auction!</p>
+        {% else %} 
+            <p>This item has already been sold.</p>
+        {% endif %}
+    {% endif %}
+
+    
+
+        <a href="{% url 'add_watchlist' listing.id %}" class="btn btn-primary">Add to Watch List</a>
+    
+
+    <p><b>Current Bid: </b> {{ listing.current_bid }} Galleons</p>
+    <h2>Bid</h2>
+    <form action = "{% url 'make_bid' listing.id %}" method="post">
+        {% csrf_token %} 
+        {{ bid_form }}
+        <input type="submit" value="Make Bid">
+    </form>
+
+    <h2>Comments </h2>
+    <form action = "{% url 'comment' listing.id %}" method="post">
+        {% csrf_token %}
+        {{ comment_form }}
+        <input type="submit" value="Post Comment">
+    </form>
+    {% endif %}
+
+    {% for comment in comments %}
+        <p><b>{{ comment.user }}</b> <br> {{ comment.comment }}</p>
+    {% endfor %}
+
+{% endblock %}
